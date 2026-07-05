@@ -1,23 +1,24 @@
 :root {
-  --bg: #f4f5f7;
-  --panel: #ffffff;
-  --panel-2: #f7f8fa;
-  --border: #e3e6ea;
-  --border-strong: #d3d8de;
-  --text: #1f2937;
-  --text-dim: #5b6674;
-  --text-faint: #9aa4b1;
-  --accent: #2f6fed;
-  --accent-hover: #2560d4;
-  --accent-soft: #4b83f0;
-  --accent-bg: #eaf1fe;
-  --accent-border: #cfe0fd;
-  --highlight-bg: #fff2b2;
-  --highlight-text: #5a4300;
-  --danger: #d6483b;
+  --bg: #0e0f12;
+  --bg-2: #16181d;
+  --panel: #1b1e24;
+  --panel-2: #22262e;
+  --border: #2b303a;
+  --border-strong: #3a414d;
+  --text: #eceef2;
+  --text-dim: #a7aeba;
+  --text-faint: #6f7784;
+  --accent: #6b8cff;
+  --accent-hover: #829dff;
+  --accent-soft: #91a8ff;
+  --accent-bg: rgba(107, 140, 255, 0.14);
+  --accent-border: rgba(107, 140, 255, 0.32);
+  --highlight-bg: #d8c56a;
+  --highlight-text: #1a1500;
+  --danger: #ef6a5a;
   --radius: 14px;
   --radius-sm: 10px;
-  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 28px rgba(16, 24, 40, 0.08);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 44px rgba(0, 0, 0, 0.5);
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -32,13 +33,62 @@ html, body {
 
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: var(--bg);
+  background:
+    radial-gradient(1200px 700px at 50% -10%, #1c2030 0%, transparent 60%),
+    linear-gradient(180deg, #0f1115 0%, #0b0c0f 100%);
   color: var(--text);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Sparkle / glitter layer */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20% -20% -20% -20%;
+  pointer-events: none;
+  z-index: 0;
+  background-repeat: repeat;
+}
+
+body::before {
+  background-image:
+    radial-gradient(1.4px 1.4px at 20px 30px, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(1.2px 1.2px at 120px 80px, rgba(255, 255, 255, 0.65), transparent),
+    radial-gradient(1px 1px at 200px 160px, rgba(200, 215, 255, 0.75), transparent),
+    radial-gradient(1.6px 1.6px at 300px 60px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 80px 220px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1.3px 1.3px at 260px 240px, rgba(210, 220, 255, 0.7), transparent);
+  background-size: 340px 300px;
+  animation: twinkle 4.5s ease-in-out infinite;
+}
+
+body::after {
+  background-image:
+    radial-gradient(1px 1px at 60px 50px, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1.5px 1.5px at 180px 120px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 40px 180px, rgba(190, 205, 255, 0.6), transparent),
+    radial-gradient(1.2px 1.2px at 240px 200px, rgba(255, 255, 255, 0.6), transparent);
+  background-size: 280px 260px;
+  background-position: 90px 40px;
+  animation: twinkle 6s ease-in-out infinite 1.2s;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before, body::after { animation: none; opacity: 0.6; }
 }
 
 .page {
+  position: relative;
+  z-index: 1;
   max-width: 860px;
   margin: 0 auto;
   padding: 48px 24px 40px;
@@ -306,7 +356,7 @@ body {
 .btn-ghost:hover {
   color: var(--danger);
   border-color: var(--danger);
-  background: #fdf1f0;
+  background: rgba(239, 106, 90, 0.12);
 }
 
 /* Notice */
@@ -314,9 +364,9 @@ body {
   margin-top: 14px;
   padding: 10px 14px;
   font-size: 0.83rem;
-  color: #8a5a00;
-  background: #fff7e6;
-  border: 1px solid #ffe2a8;
+  color: #e6c877;
+  background: rgba(216, 197, 106, 0.1);
+  border: 1px solid rgba(216, 197, 106, 0.28);
   border-radius: var(--radius-sm);
 }
 
@@ -417,7 +467,7 @@ body {
 .result-row:first-child { padding-top: 10px; }
 .result-row:last-child { padding-bottom: 10px; }
 
-.result-row.is-match { background: #fbfcfe; }
+.result-row.is-match { background: rgba(107, 140, 255, 0.05); }
 
 .result-row.is-context .line-text { color: var(--text-faint); }
 .result-row.is-context .line-no { opacity: 0.55; }
