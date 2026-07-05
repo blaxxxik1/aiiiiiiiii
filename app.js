@@ -19,6 +19,11 @@
   const navCounter = document.getElementById("navCounter");
   const prevMatch = document.getElementById("prevMatch");
   const nextMatch = document.getElementById("nextMatch");
+  const notice = document.getElementById("notice");
+
+  // Cap how many matches we render to the DOM so huge files can't freeze the tab.
+  const MAX_RENDERED = 1000;
+  const MAX_FILE_BYTES = 25 * 1024 * 1024;
 
   let lines = [];
   let hasFile = false;
@@ -53,6 +58,10 @@
 
   function loadFile(file) {
     if (!file) return;
+    if (file.size > MAX_FILE_BYTES) {
+      alert("Файл слишком большой (" + formatSize(file.size) + "). Максимум — 25 МБ.");
+      return;
+    }
     const reader = new FileReader();
     reader.onload = function (e) {
       const text = String(e.target.result || "");
@@ -86,6 +95,7 @@
     query.disabled = true;
     results.hidden = true;
     navBar.hidden = true;
+    notice.hidden = true;
     resultsList.innerHTML = "";
   }
 
@@ -146,6 +156,7 @@
     if (!term) {
       results.hidden = true;
       navBar.hidden = true;
+      notice.hidden = true;
       resultsList.innerHTML = "";
       return;
     }
@@ -176,14 +187,27 @@
       resultsList.innerHTML = "";
       emptyState.hidden = false;
       navBar.hidden = true;
+      notice.hidden = true;
       return;
     }
     emptyState.hidden = true;
 
+    // Cap rendered matches to keep the DOM (and the tab) responsive.
+    let renderLines = matchLines;
+    if (matchLines.length > MAX_RENDERED) {
+      renderLines = matchLines.slice(0, MAX_RENDERED);
+      notice.hidden = false;
+      notice.textContent =
+        "Найдено " + matchLines.length + " совпадений — показаны первые " +
+        MAX_RENDERED + ". Уточните запрос, чтобы сузить поиск.";
+    } else {
+      notice.hidden = true;
+    }
+
     // Merge context windows into blocks
-    const matchSet = new Set(matchLines);
+    const matchSet = new Set(renderLines);
     const blocks = [];
-    for (const ml of matchLines) {
+    for (const ml of renderLines) {
       const start = Math.max(0, ml - ctx);
       const end = Math.min(lines.length - 1, ml + ctx);
       const last = blocks[blocks.length - 1];
@@ -247,7 +271,13 @@
 
   clearFile.addEventListener("click", reset);
 
-  query.addEventListener("input", runSearch);
+  let searchTimer = null;
+  function debouncedSearch() {
+    if (searchTimer) clearTimeout(searchTimer);
+    searchTimer = setTimeout(runSearch, 140);
+  }
+
+  query.addEventListener("input", debouncedSearch);
   caseSensitive.addEventListener("change", runSearch);
   wholeWord.addEventListener("change", runSearch);
   contextLines.addEventListener("change", runSearch);
